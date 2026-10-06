@@ -1,0 +1,21 @@
+# built reports (regenerate with `make`)
+Labs/*/out/
+.venv/
+__pycache__/
+*~
+
+# compiled binaries / objects
+Labs/05-modbus-tls/modbus_tcp
+*.o
+
+# generated TLS material (reproduce with gen-certs.sh)
+Labs/05-modbus-tls/certs/*.key
+Labs/05-modbus-tls/certs/*.crt
+Labs/05-modbus-tls/certs/*.srl
+
+# python bytecode
+*.pyc
+
+# Cooja firmware build artifacts (rebuilt from Contiki)
+*.sky
+*.co

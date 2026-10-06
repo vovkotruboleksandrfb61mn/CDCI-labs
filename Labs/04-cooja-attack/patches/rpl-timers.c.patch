@@ -1,0 +1,11 @@
+--- a/core/net/rpl/rpl-timers.c
++++ b/core/net/rpl/rpl-timers.c
+@@ -71,7 +71,7 @@ handle_periodic_timer(void *ptr)
+   /* handle DIS */
+ #ifdef RPL_DIS_SEND
+   next_dis++;
+-  if(rpl_get_any_dag() == NULL && next_dis >= RPL_DIS_INTERVAL) {
++  if(next_dis >= RPL_DIS_INTERVAL) {
+     next_dis = 0;
+     dis_output(NULL);
+   }

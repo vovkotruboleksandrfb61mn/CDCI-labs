@@ -1,0 +1,13 @@
+--- a/core/net/rpl/rpl-private.h
++++ b/core/net/rpl/rpl-private.h
+@@ -191,10 +191,10 @@
+ /* DIS related */
+ #define RPL_DIS_SEND                    1
+ #ifdef  RPL_DIS_INTERVAL_CONF
+ #define RPL_DIS_INTERVAL                RPL_DIS_INTERVAL_CONF
+ #else
+-#define RPL_DIS_INTERVAL                60
++#define RPL_DIS_INTERVAL                0
+ #endif
+-#define RPL_DIS_START_DELAY             5
++#define RPL_DIS_START_DELAY             0

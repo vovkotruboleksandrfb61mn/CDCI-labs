@@ -1,0 +1,123 @@
+\documentclass[12pt,a4paper]{article}
+
+%% ---- fonts (Cyrillic-capable, present on this machine) ----
+\usepackage{fontspec}
+\setmainfont{Liberation Serif}
+\setsansfont{Liberation Sans}
+\setmonofont{Liberation Mono}[Scale=0.85]
+
+%% ---- page ----
+\usepackage[a4paper,left=25mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+
+%% ---- pandoc plumbing ----
+\usepackage{calc}
+\usepackage{graphicx}
+%% Рисунки розміщуються САМЕ там, де вони в тексті.
+%% Без цього pandoc робить із них плаваючі об'єкти: черга флоатів
+%% переповнюється, і LaTeX мовчки губить текст між ними.
+\usepackage{float}
+\floatplacement{figure}{H}
+%% Довгі URL мають переноситись, а не вилазити за поле
+\PassOptionsToPackage{hyphens}{url}
+%% Довгі назви у моноширинному шрифті мають переноситись,
+%% інакше вони вилазять за праве поле на десятки пунктів.
+%% Пакет є не в кожному дистрибутиві TeX Live; без нього збірка все одно
+%% проходить, лише моноширинні назви не переносяться (див. make check).
+\IfFileExists{hyphenat.sty}{\usepackage[htt]{hyphenat}}{}
+\emergencystretch=3em  % остання лінія оборони проти overfull hbox
+\usepackage{longtable,booktabs,array}
+%% Підписи пишуться в тексті вручну («Таблиця 4.1. ...», «Рисунок 4.1. ...»),
+%% тож автоматичну мітку «Рисунок 1:» вимикаємо, інакше вона дублюється.
+\usepackage{caption}
+\captionsetup{labelformat=empty,labelsep=none,justification=centering,singlelinecheck=false}
+%% \needspace{N\baselineskip} перед короткою таблицею переносить її разом із
+%% підписом на нову сторінку замість розриву (пакета needspace тут немає).
+\makeatletter
+\providecommand{\needspace}[1]{\par\penalty-100\begingroup
+  \setlength{\dimen@}{#1}\dimen@ii\pagegoal\advance\dimen@ii-\pagetotal
+  \ifdim\dimen@>\dimen@ii\ifdim\dimen@ii>\z@\vfil\fi\penalty-\@M\fi
+  \endgroup}
+\makeatother
+\usepackage{xcolor}
+\usepackage{fancyvrb}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath,amssymb}
+\usepackage[unicode,hidelinks,breaklinks=true]{hyperref}
+
+%% ---- Ukrainian names for auto-generated labels ----
+\renewcommand{\contentsname}{Зміст}
+\renewcommand{\refname}{Джерела}
+\renewcommand{\figurename}{Рисунок}
+\renewcommand{\tablename}{Таблиця}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\passthrough}[1]{#1}
+
+\makeatletter
+\newsavebox\pandoc@box
+\providecommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi%
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+\makeatother
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+\begin{document}
+
+%% ---------------- title page ----------------
+\begin{titlepage}
+\centering
+\thispagestyle{empty}
+
+{МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ\par}
+\vspace{2mm}
+{НАЦІОНАЛЬНИЙ ТЕХНІЧНИЙ УНІВЕРСИТЕТ УКРАЇНИ\par}
+{«КИЇВСЬКИЙ ПОЛІТЕХНІЧНИЙ ІНСТИТУТ імені ІГОРЯ СІКОРСЬКОГО»\par}
+$if(faculty)$\vspace{2mm}{$faculty$\par}$endif$
+$if(department)$\vspace{2mm}{$department$\par}$endif$
+
+\vfill
+
+{\large $if(worktype)$$worktype$$else$ЗВІТ$endif$\par}
+\vspace{4mm}
+$if(discipline)${з дисципліни «$discipline$»\par}$endif$
+\vspace{4mm}
+{\large\bfseries $title$\par}
+$if(subtitle)$\vspace{2mm}{$subtitle$\par}$endif$
+$if(variant)$\vspace{3mm}{Варіант $variant$\par}$endif$
+
+\vfill
+
+\begin{flushright}
+\begin{minipage}{0.55\textwidth}
+\raggedright
+$if(author)$Виконав: $author$\par$endif$
+$if(group)$Група: $group$\par$endif$
+$if(teacher)$\vspace{3mm}Перевірив: $teacher$\par$endif$
+\end{minipage}
+\end{flushright}
+
+\vfill
+{$if(city)$$city$$else$Київ$endif$ $if(date)$$date$$else$\the\year$endif$\par}
+\end{titlepage}
+
+$if(toc)$
+\tableofcontents
+\newpage
+$endif$
+
+$body$
+
+\end{document}

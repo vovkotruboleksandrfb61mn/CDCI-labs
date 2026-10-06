@@ -1,0 +1,201 @@
+[
+  {
+    "id": "CVE-2020-11896",
+    "short": "Ripple20, стек Treck",
+    "asset": "мережеві карти ДБЖ, шлюзи RS-485/Ethernet",
+    "base": 10.0,
+    "temporal": 9.0,
+    "env_now": 9.0,
+    "env_after": 8.7,
+    "vectors": {
+      "base": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+      "temporal": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C",
+      "env_now": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C/CR:L/IR:H/AR:H",
+      "env_after": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C/CR:L/IR:H/AR:H/MAV:A"
+    },
+    "nvd": {
+      "published": "2020-06-17",
+      "kev": false,
+      "cwe": [
+        "CWE-119"
+      ],
+      "metrics": [
+        [
+          "nvd@nist.gov",
+          "Primary",
+          "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          10.0
+        ]
+      ]
+    },
+    "impact": 6.05,
+    "exploitability": 3.89,
+    "sev_base": "Critical",
+    "sev_now": "Critical",
+    "sev_after": "High"
+  },
+  {
+    "id": "CVE-2021-36260",
+    "short": "Hikvision, ін'єкція команд",
+    "asset": "IP-камери охорони периметра",
+    "base": 9.8,
+    "temporal": 9.4,
+    "env_now": 9.4,
+    "env_after": 8.4,
+    "vectors": {
+      "base": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "temporal": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C",
+      "env_now": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C/CR:H/IR:M/AR:M",
+      "env_after": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C/CR:H/IR:M/AR:M/MAV:A"
+    },
+    "nvd": {
+      "published": "2021-09-22",
+      "kev": true,
+      "cwe": [
+        "CWE-78"
+      ],
+      "metrics": [
+        [
+          "nvd@nist.gov",
+          "Primary",
+          "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          9.8
+        ],
+        [
+          "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+          "Secondary",
+          "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          9.8
+        ]
+      ]
+    },
+    "impact": 5.87,
+    "exploitability": 3.89,
+    "sev_base": "Critical",
+    "sev_now": "Critical",
+    "sev_after": "High"
+  },
+  {
+    "id": "CVE-2022-38465",
+    "short": "SIMATIC S7-1200/1500, ключ",
+    "asset": "ПЛК керування насосами",
+    "base": 7.8,
+    "temporal": 7.0,
+    "env_now": 7.0,
+    "env_after": 6.0,
+    "vectors": {
+      "base": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+      "temporal": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+      "env_now": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C/CR:H/IR:H/AR:H",
+      "env_after": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C/CR:H/IR:H/AR:H/MPR:H"
+    },
+    "nvd": {
+      "published": "2022-10-11",
+      "kev": false,
+      "cwe": [
+        "CWE-522"
+      ],
+      "metrics": [
+        [
+          "productcert@siemens.com",
+          "Secondary",
+          "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          9.3
+        ],
+        [
+          "nvd@nist.gov",
+          "Primary",
+          "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+          7.8
+        ]
+      ]
+    },
+    "impact": 5.87,
+    "exploitability": 1.83,
+    "sev_base": "High",
+    "sev_now": "High",
+    "sev_after": "Medium",
+    "alt": {
+      "source": "productcert@siemens.com",
+      "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+      "score": 9.3
+    }
+  },
+  {
+    "id": "CVE-2019-10953",
+    "short": "ПЛК, DoS-флуд",
+    "asset": "ПЛК (ABB, Phoenix, Schneider, Siemens, WAGO)",
+    "base": 7.5,
+    "temporal": 7.3,
+    "env_now": 9.1,
+    "env_after": 8.1,
+    "vectors": {
+      "base": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "temporal": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:H/RL:W/RC:C",
+      "env_now": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:H/RL:W/RC:C/CR:L/IR:M/AR:H",
+      "env_after": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:H/RL:W/RC:C/CR:L/IR:M/AR:H/MAV:A"
+    },
+    "nvd": {
+      "published": "2019-04-17",
+      "kev": false,
+      "cwe": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "metrics": [
+        [
+          "nvd@nist.gov",
+          "Primary",
+          "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          7.5
+        ],
+        [
+          "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+          "Secondary",
+          "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          7.5
+        ]
+      ]
+    },
+    "impact": 3.6,
+    "exploitability": 3.89,
+    "sev_base": "High",
+    "sev_now": "Critical",
+    "sev_after": "High"
+  },
+  {
+    "id": "CVE-2019-16336",
+    "short": "SweynTooth, BLE PSoC 4",
+    "asset": "бездротові BLE-датчики тиску й рівня",
+    "base": 6.5,
+    "temporal": 6.0,
+    "env_now": 6.0,
+    "env_after": 4.9,
+    "vectors": {
+      "base": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "temporal": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:F/RL:O/RC:C",
+      "env_now": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:F/RL:O/RC:C/CR:L/IR:L/AR:M",
+      "env_after": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:F/RL:O/RC:C/CR:L/IR:L/AR:M/MAC:H"
+    },
+    "nvd": {
+      "published": "2020-02-12",
+      "kev": false,
+      "cwe": [
+        "CWE-120"
+      ],
+      "metrics": [
+        [
+          "nvd@nist.gov",
+          "Primary",
+          "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          6.5
+        ]
+      ]
+    },
+    "impact": 3.6,
+    "exploitability": 2.84,
+    "sev_base": "Medium",
+    "sev_now": "Medium",
+    "sev_after": "Medium"
+  }
+]
