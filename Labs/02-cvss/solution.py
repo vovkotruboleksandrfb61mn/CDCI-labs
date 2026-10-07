@@ -174,6 +174,35 @@ def main() -> None:
             if typ == "Secondary" and vec != r["vectors"]["base"]:
                 r["alt"] = {"source": src, "vector": vec, "score": sc}
 
+    # ---- аналіз чутливості ----
+    # 1) CVE-2022-38465 за трактуванням Siemens (PR:N, S:C) та за NVD з MS:C:
+    #    «один витягнутий ключ компрометує весь парк ПЛК».
+    v36260 = next(r for r in rows if r["id"] == "CVE-2022-38465")
+    siemens = "AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C"
+    v36260["sensitivity"] = {
+        "siemens_vector": {
+            "vector": "CVSS:3.1/" + siemens,
+            "base": score("CVSS:3.1/" + siemens)["base"],
+            "env_now": score(f"CVSS:3.1/{siemens}/CR:H/IR:H/AR:H")["environmental"],
+            "env_after": score(f"CVSS:3.1/{siemens}/CR:H/IR:H/AR:H/MPR:H")["environmental"],
+        },
+        "nvd_msc": {
+            "vector": f"{v36260['vectors']['env_now']}/MS:C",
+            "env_now": score(f"{v36260['vectors']['env_now']}/MS:C")["environmental"],
+            "env_after": score(f"{v36260['vectors']['env_now']}/MS:C/MPR:H")["environmental"],
+        },
+    }
+    # 2) CVE-2019-10953: наскільки висока вимога до доступності (AR)
+    #    підіймає оцінку; AR:M замість AR:H.
+    v10953 = next(r for r in rows if r["id"] == "CVE-2019-10953")
+    v10953["sensitivity"] = {
+        "arm": {
+            "vector": v10953['vectors']['env_now'].replace("AR:H", "AR:M"),
+            "env_arm": score(f"{v10953['vectors']['temporal']}/CR:L/IR:M/AR:M")["environmental"],
+            "env_arh": v10953["env_now"],
+        }
+    }
+
     DATA.mkdir(exist_ok=True)
     (DATA / "results.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2))
 

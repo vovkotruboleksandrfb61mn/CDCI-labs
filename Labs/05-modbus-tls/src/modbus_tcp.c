@@ -54,13 +54,13 @@ static int read_full(conn_t *c, unsigned char *buf, int n) {
 }
 
 /* ---- TLS ---- */
-static SSL_CTX *tls_server_ctx(void) {
+static SSL_CTX *tls_server_ctx(const char *cert, const char *key) {
     SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
     if (!ctx) die("SSL_CTX_new");
     SSL_CTX_set_min_proto_version(ctx, TLS1_3_VERSION);
-    if (SSL_CTX_use_certificate_file(ctx, "certs/server.crt", SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_certificate_file(ctx, cert, SSL_FILETYPE_PEM) != 1)
         die("load cert (запустіть gen-certs.sh)");
-    if (SSL_CTX_use_PrivateKey_file(ctx, "certs/server.key", SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_PrivateKey_file(ctx, key, SSL_FILETYPE_PEM) != 1)
         die("load key");
     return ctx;
 }
@@ -116,8 +116,8 @@ static int serve_one(conn_t *c, unsigned short regs[]) {
     return conn_write(c, resp, 9) > 0;
 }
 
-static int run_server(int port, int use_tls) {
-    SSL_CTX *ctx = use_tls ? tls_server_ctx() : NULL;
+static int run_server(int port, int use_tls, const char *cert, const char *key) {
+    SSL_CTX *ctx = use_tls ? tls_server_ctx(cert, key) : NULL;
     unsigned short regs[NREG];
     for (int i = 0; i < NREG; i++) regs[i] = 1000 + i; /* показові значення */
 
@@ -147,7 +147,38 @@ static int run_server(int port, int use_tls) {
     return 0;
 }
 
-static int run_client(int port, int use_tls, unsigned short start, unsigned short cnt) {
+static double now_ms(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1e3 + ts.tv_nsec / 1e6;
+}
+
+static void hexdump_fd(FILE *f, const unsigned char *buf, int n) {
+    for (int i = 0; i < n; i++) fprintf(f, "%02x ", buf[i]);
+    fprintf(f, "\n");
+}
+
+/* Один обмін запит-відповідь; повертає 1 успіх, 0 кінець, -1 помилка. */
+static int exchange(conn_t *c, unsigned short start, unsigned short cnt, int print) {
+    unsigned char req[12] = {0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01,
+                             0x03, start >> 8, start & 0xff, cnt >> 8, cnt & 0xff};
+    if (conn_write(c, req, sizeof req) <= 0) return -1;
+    unsigned char resp[9 + 255];  /* MBAP+PDU header (9) + max byte count (255) */
+    if (read_full(c, resp, 9) <= 0) return -1;
+    unsigned char bytecount = resp[8];
+    if (bytecount == 0 || read_full(c, resp + 9, bytecount) <= 0) return -1;
+    if (print) {
+        printf("client: прочитано %d регістрів від адреси %u:\n", cnt, start);
+        for (int i = 0; i < cnt; i++) {
+            unsigned short v = (resp[9 + i * 2] << 8) | resp[9 + i * 2 + 1];
+            printf("  reg[%u] = %u\n", start + i, v);
+        }
+    }
+    return 1;
+}
+
+static int run_client(int port, int use_tls, unsigned short start, unsigned short cnt,
+                      int repeat, int hold_ms) {
     SSL_CTX *ctx = use_tls ? tls_client_ctx() : NULL;
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in a = {.sin_family = AF_INET, .sin_port = htons(port),
@@ -162,39 +193,89 @@ static int run_client(int port, int use_tls, unsigned short start, unsigned shor
         printf("client: TLS %s, сервер автентифіковано\n", SSL_get_version(c.ssl));
     }
 
-    /* Read Holding Registers: MBAP + PDU */
-    unsigned char req[12] = {0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01,
-                             0x03, start >> 8, start & 0xff, cnt >> 8, cnt & 0xff};
-    conn_write(&c, req, sizeof req);
+    for (int i = 0; i < repeat; i++)
+        if (exchange(&c, start, cnt, 1) < 0) die("exchange failed");
 
-    unsigned char resp[260];
-    if (read_full(&c, resp, 9) <= 0) die("no response");
-    unsigned char bytecount = resp[8];
-    if (read_full(&c, resp + 9, bytecount - 0) < 0) die("short read");
-    printf("client: прочитано %d регістрів від адреси %u:\n", cnt, start);
-    for (int i = 0; i < cnt; i++) {
-        unsigned short v = (resp[9 + i * 2] << 8) | resp[9 + i * 2 + 1];
-        printf("  reg[%u] = %u\n", start + i, v);
+    /* Тримати з'єднання відкритим, щоб побачити дані атаки повторного
+       відтворення (сніфер --replay) або нічого не отримати. */
+    if (hold_ms > 0) {
+        struct timeval tv = {.tv_sec = hold_ms / 1000, .tv_usec = (hold_ms % 1000) * 1000};
+        setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+        unsigned char extra[512];
+        int r = conn_read(&c, extra, sizeof extra);
+        if (r > 0) {
+            printf("client: НЕОЧІКУВАНІ дані (ознака replay, %d байт): ", r);
+            hexdump_fd(stdout, extra, r);
+        } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            printf("client: додаткових даних не надійшло\n");
+        } else {
+            printf("client: з'єднання розірвано сервером після повторного "
+                   "відтворення запису (TLS відхилив повтор)\n");
+        }
     }
     if (c.ssl) { SSL_shutdown(c.ssl); SSL_free(c.ssl); }
     close(fd);
     return 0;
 }
 
+/* Вимірювання: час встановлення з'єднання (TCP або TCP+TLS) і час
+   кругового обходу запиту. */
+static int run_bench(int port, int use_tls, int nconn, unsigned short cnt) {
+    SSL_CTX *bench_ctx = use_tls ? tls_client_ctx() : NULL;
+    double t_conn = 0, t_rtt = 0;
+    int ok = 0, rtts = 0;
+    for (int i = 0; i < nconn; i++) {
+        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        struct sockaddr_in a = {.sin_family = AF_INET, .sin_port = htons(port),
+                                .sin_addr.s_addr = htonl(INADDR_LOOPBACK)};
+        double t0 = now_ms();
+        if (connect(fd, (struct sockaddr *)&a, sizeof a) != 0) { close(fd); continue; }
+        conn_t c = {.fd = fd, .ssl = NULL};
+        if (use_tls) {
+            c.ssl = SSL_new(bench_ctx);
+            SSL_set_fd(c.ssl, fd);
+            if (SSL_connect(c.ssl) != 1 ||
+                SSL_get_verify_result(c.ssl) != X509_V_OK) { close(fd); continue; }
+        }
+        t_conn += now_ms() - t0;
+        for (int k = 0; k < 20; k++) {
+            double t1 = now_ms();
+            if (exchange(&c, 0, cnt, 0) == 1) { t_rtt += now_ms() - t1; rtts++; }
+        }
+        if (c.ssl) { SSL_shutdown(c.ssl); SSL_free(c.ssl); }
+        close(fd);
+        ok++;
+    }
+    if (!ok) die("bench: жодного з'єднання");
+    printf("bench: %d з'єднань, %s\n", ok, use_tls ? "TLS 1.3" : "plain TCP");
+    printf("  середній час з'єднання (з рукостисканням): %.3f мс\n", t_conn / ok);
+    if (rtts) printf("  середній час запит-відповідь: %.3f мс (%d запитів)\n", t_rtt / rtts, rtts);
+    return 0;
+}
+
 int main(int argc, char **argv) {
-    int server = 0, client = 0, tls = 0, port = DEFAULT_PORT;
+    int server = 0, client = 0, tls = 0, bench = 0, port = DEFAULT_PORT;
+    int repeat = 1, hold_ms = 0;
     unsigned short start = 0, cnt = 4;
+    const char *cert = "certs/server.crt", *key = "certs/server.key";
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--server")) server = 1;
         else if (!strcmp(argv[i], "--client")) client = 1;
         else if (!strcmp(argv[i], "--tls")) tls = 1;
+        else if (!strcmp(argv[i], "--bench")) bench = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--port")) port = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--addr")) start = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--count")) cnt = atoi(argv[++i]);
+        else if (!strcmp(argv[i], "--repeat")) repeat = atoi(argv[++i]);
+        else if (!strcmp(argv[i], "--hold")) hold_ms = atoi(argv[++i]);
+        else if (!strcmp(argv[i], "--cert")) cert = argv[++i];
+        else if (!strcmp(argv[i], "--key")) key = argv[++i];
     }
     if (tls) { SSL_library_init(); SSL_load_error_strings(); }
-    if (server) return run_server(port, tls);
-    if (client) return run_client(port, tls, start, cnt);
-    fprintf(stderr, "usage: %s --server|--client [--tls] [--port N]\n", argv[0]);
+    if (server) return run_server(port, tls, cert, key);
+    if (bench > 0) return run_bench(port, tls, bench, cnt);
+    if (client) return run_client(port, tls, start, cnt, repeat, hold_ms);
+    fprintf(stderr, "usage: %s --server|--client [--tls] [--port N] [--bench N] "
+            "[--repeat N] [--hold MS] [--cert F] [--key F]\n", argv[0]);
     return 2;
 }

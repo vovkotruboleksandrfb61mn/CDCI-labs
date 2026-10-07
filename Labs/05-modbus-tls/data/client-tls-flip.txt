@@ -1,0 +1,3 @@
+error: exchange failed
+00C390882C7F0000:error:0A0003FC:SSL routines:ssl3_read_bytes:ssl/tls alert bad record mac:ssl/record/rec_layer_s3.c:918:SSL alert number 20
+client: TLS TLSv1.3, сервер автентифіковано

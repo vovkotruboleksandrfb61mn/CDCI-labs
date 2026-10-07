@@ -94,6 +94,20 @@ def main() -> None:
         "mean_cpu_after": float(np.mean([r["cpu_after"] for r in rows])),
         "rows": rows,
     }
+
+    # ---- час автономної роботи від батарей (2 x AA, ~2500 мА*год, 3 В) ----
+    # E = 2 * 2.5 А*год * 1.5 В = 7.5 Вт*год; T = E / P
+    BATTERY_WH = 2 * 2.5 * 1.5
+    t_b = BATTERY_WH / summary["mean_total_before"] * 1e3 / 24   # дні
+    t_a = BATTERY_WH / summary["mean_total_after"] * 1e3 / 24
+    summary["battery"] = {
+        "capacity_wh": BATTERY_WH,
+        "lifetime_days_before": t_b,
+        "lifetime_days_after": t_a,
+        "lifetime_loss_days": t_b - t_a,
+        "lifetime_loss_pct": 100 * (t_b - t_a) / t_b,
+    }
+
     (DATA / "compare.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2))
 
     # ---- графік: до/після для Total, Listen, CPU ----
@@ -127,6 +141,9 @@ def main() -> None:
     print(f"MEAN   {summary['mean_total_before']:8.3f} {summary['mean_total_after']:8.3f}"
           f"   listen {summary['mean_listen_before']:.3f}->{summary['mean_listen_after']:.3f}"
           f"   cpu {summary['mean_cpu_before']:.3f}->{summary['mean_cpu_after']:.3f}")
+    b = summary["battery"]
+    print(f"battery: {b['lifetime_days_before']:.0f} -> {b['lifetime_days_after']:.0f} днів "
+          f"(-{b['lifetime_loss_days']:.0f} днів, -{b['lifetime_loss_pct']:.1f} %)")
 
 
 if __name__ == "__main__":

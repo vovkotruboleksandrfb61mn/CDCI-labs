@@ -119,6 +119,19 @@
       "source": "productcert@siemens.com",
       "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
       "score": 9.3
+    },
+    "sensitivity": {
+      "siemens_vector": {
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C",
+        "base": 9.3,
+        "env_now": 8.4,
+        "env_after": 7.5
+      },
+      "nvd_msc": {
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C/CR:H/IR:H/AR:H/MS:C",
+        "env_now": 7.9,
+        "env_after": 7.5
+      }
     }
   },
   {
@@ -161,7 +174,14 @@
     "exploitability": 3.89,
     "sev_base": "High",
     "sev_now": "Critical",
-    "sev_after": "High"
+    "sev_after": "High",
+    "sensitivity": {
+      "arm": {
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:H/RL:W/RC:C/CR:L/IR:M/AR:M",
+        "env_arm": 7.3,
+        "env_arh": 9.1
+      }
+    }
   },
   {
     "id": "CVE-2019-16336",

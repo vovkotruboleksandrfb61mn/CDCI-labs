@@ -88,5 +88,12 @@
       "cpu_after": 0.37335644486557895,
       "total_delta_pct": 1.5429396345890793
     }
-  ]
+  ],
+  "battery": {
+    "capacity_wh": 7.5,
+    "lifetime_days_before": 317.737621115602,
+    "lifetime_days_after": 311.2682482595705,
+    "lifetime_loss_days": 6.469372856031498,
+    "lifetime_loss_pct": 2.0360739258124414
+  }
 }

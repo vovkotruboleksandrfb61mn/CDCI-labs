@@ -147,5 +147,78 @@ ax.grid(alpha=0.3, axis="y")
 fig.tight_layout()
 fig.savefig(ASSETS / "02-residuals.png", dpi=200)
 
+# ---- розширення: довірчий інтервал нахилу, регресії для лічильників ----
+from math import sqrt
+
+ci_a = (a - T_CRIT * se_a, a + T_CRIT * se_a)
+
+
+def irls_count(xs: np.ndarray, ys: np.ndarray, alpha: float = 0.0,
+               iters: int = 200) -> np.ndarray:
+    """IRLS для лог-лінійної регресії лічильників: Пуассон (alpha=0) або НБ."""
+    X = np.column_stack([np.ones_like(xs), xs])
+    beta = np.zeros(2)
+    beta[0] = np.log(max(ys.mean(), 1.0))
+    for _ in range(iters):
+        eta = X @ beta
+        mu = np.exp(eta)
+        w = mu / (1.0 + alpha * mu)  # для Пуассона w = mu
+        z = eta + (ys - mu) / mu
+        beta_new = np.linalg.solve((X * w[:, None]).T @ X, (X * w[:, None]).T @ z)
+        if np.allclose(beta_new, beta, atol=1e-12):
+            return beta_new
+        beta = beta_new
+    return beta
+
+
+def count_model_stats(xs, ys, beta, alpha):
+    X = np.column_stack([np.ones_like(xs), xs])
+    mu = np.exp(X @ beta)
+    w = mu / (1.0 + alpha * mu)
+    cov = np.linalg.inv((X * w[:, None]).T @ X)
+    se = np.sqrt(np.diag(cov))
+    pearson = float((((ys - mu) ** 2) / (mu + alpha * mu**2)).sum() / (len(ys) - 2))
+    return float(se[1]), float(beta[1] / se[1]), pearson
+
+beta_poi = irls_count(x, y, alpha=0.0)
+se1_poi, t_poi, pear_poi = count_model_stats(x, y, beta_poi, 0.0)
+# дисперсію НБ (alpha) підбираємо методом моментів: Pearson/df = 1
+alpha_grid = np.linspace(0.01, 0.5, 200)
+best = float(min(alpha_grid, key=lambda al: abs(count_model_stats(x, y, irls_count(x, y, al), al)[2] - 1.0)))
+beta_nb = irls_count(x, y, best)
+se1_nb, t_nb, pear_nb = count_model_stats(x, y, beta_nb, best)
+
+# зростання за моделями для лічильників, % на місяць: y ~ exp(b0 + b1 x)
+growth_pct_poi = float((np.exp(beta_poi[1]) - 1) * 100)
+growth_pct_nb = float((np.exp(beta_nb[1]) - 1) * 100)
+
+# рангова кореляція Спірмена залишків з номером місяця
+def _rank(v: np.ndarray) -> np.ndarray:
+    order = np.argsort(v)
+    ranks = np.empty(len(v))
+    ranks[order] = np.arange(1, len(v) + 1)
+    return ranks
+
+
+def spearman(v1: np.ndarray, v2: np.ndarray) -> tuple[float, float]:
+    r1, r2 = _rank(v1), _rank(v2)
+    rho = float(np.corrcoef(r1, r2)[0, 1])
+    t = rho * sqrt((len(v1) - 2) / (1 - rho**2))
+    return rho, t
+
+rho_res, t_res = spearman(resid, x)
+
+results.update({
+    "ci_a": [float(v) for v in ci_a],
+    "poisson": {"b0": float(beta_poi[0]), "b1": float(beta_poi[1]),
+                "se_b1": se1_poi, "t_b1": t_poi, "pearson_df": pear_poi,
+                "growth_pct_per_month": growth_pct_poi},
+    "negbin": {"b0": float(beta_nb[0]), "b1": float(beta_nb[1]), "alpha": best,
+               "se_b1": se1_nb, "t_b1": t_nb, "pearson_df": pear_nb,
+               "growth_pct_per_month": growth_pct_nb},
+    "spearman_resid_x": {"rho": rho_res, "t": t_res},
+})
+(DATA / "results.json").write_text(json.dumps(results, ensure_ascii=False, indent=2))
+
 for k, v in results.items():
-    print(f"{k:10s} {v}")
+    print(f"{k:12s} {v}")
