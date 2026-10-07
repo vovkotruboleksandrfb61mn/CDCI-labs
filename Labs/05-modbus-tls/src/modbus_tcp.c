@@ -253,6 +253,15 @@ static int run_bench(int port, int use_tls, int nconn, unsigned short cnt) {
     return 0;
 }
 
+/* Значення прапорця, що йде наступним аргументом; якщо його немає, не падаємо. */
+static const char *arg_val(int argc, char **argv, int *i) {
+    if (*i + 1 >= argc) {
+        fprintf(stderr, "error: %s requires a value\n", argv[*i]);
+        exit(2);
+    }
+    return argv[++(*i)];
+}
+
 int main(int argc, char **argv) {
     int server = 0, client = 0, tls = 0, bench = 0, port = DEFAULT_PORT;
     int repeat = 1, hold_ms = 0;
@@ -262,14 +271,14 @@ int main(int argc, char **argv) {
         if (!strcmp(argv[i], "--server")) server = 1;
         else if (!strcmp(argv[i], "--client")) client = 1;
         else if (!strcmp(argv[i], "--tls")) tls = 1;
-        else if (!strcmp(argv[i], "--bench")) bench = atoi(argv[++i]);
-        else if (!strcmp(argv[i], "--port")) port = atoi(argv[++i]);
-        else if (!strcmp(argv[i], "--addr")) start = atoi(argv[++i]);
-        else if (!strcmp(argv[i], "--count")) cnt = atoi(argv[++i]);
-        else if (!strcmp(argv[i], "--repeat")) repeat = atoi(argv[++i]);
-        else if (!strcmp(argv[i], "--hold")) hold_ms = atoi(argv[++i]);
-        else if (!strcmp(argv[i], "--cert")) cert = argv[++i];
-        else if (!strcmp(argv[i], "--key")) key = argv[++i];
+        else if (!strcmp(argv[i], "--bench")) bench = atoi(arg_val(argc, argv, &i));
+        else if (!strcmp(argv[i], "--port")) port = atoi(arg_val(argc, argv, &i));
+        else if (!strcmp(argv[i], "--addr")) start = atoi(arg_val(argc, argv, &i));
+        else if (!strcmp(argv[i], "--count")) cnt = atoi(arg_val(argc, argv, &i));
+        else if (!strcmp(argv[i], "--repeat")) repeat = atoi(arg_val(argc, argv, &i));
+        else if (!strcmp(argv[i], "--hold")) hold_ms = atoi(arg_val(argc, argv, &i));
+        else if (!strcmp(argv[i], "--cert")) cert = arg_val(argc, argv, &i);
+        else if (!strcmp(argv[i], "--key")) key = arg_val(argc, argv, &i);
     }
     if (tls) { SSL_library_init(); SSL_load_error_strings(); }
     if (server) return run_server(port, tls, cert, key);
