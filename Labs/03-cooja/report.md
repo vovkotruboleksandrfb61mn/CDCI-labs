@@ -230,3 +230,9 @@ DODAG, кількість хопів, рівень інтерференції, �
 # Додаток Б. Підготовка симуляції (`sim/trim_motes.py`) {-}
 
 \lstinputlisting[language=Python]{Labs/03-cooja/sim/trim_motes.py}
+
+\newpage
+
+# Додаток В. Конфігурація симуляції Cooja (`lab3-8motes.csc`) {-}
+
+\lstinputlisting[language=XML]{Labs/03-cooja/sim/lab3-8motes.csc}

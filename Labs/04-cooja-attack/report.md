@@ -282,3 +282,21 @@ DIS. У термінах автономності це скорочує час �
 # Додаток А. Порівняння енергоспоживання (`solution.py`) {-}
 
 \lstinputlisting[language=Python]{Labs/04-cooja-attack/solution.py}
+
+\newpage
+
+# Додаток Б. Зміни у ядрі ContikiRPL для DIS-атаки {-}
+
+Патч файлу `core/net/rpl/rpl-private.h`:
+
+\lstinputlisting{Labs/04-cooja-attack/patches/rpl-private.h.patch}
+
+Патч файлу `core/net/rpl/rpl-timers.c`:
+
+\lstinputlisting{Labs/04-cooja-attack/patches/rpl-timers.c.patch}
+
+\newpage
+
+# Додаток В. Конфігурація симуляції з атакою (`lab4-attack.csc`) {-}
+
+\lstinputlisting[language=XML]{Labs/03-cooja/sim/lab4-attack.csc}
