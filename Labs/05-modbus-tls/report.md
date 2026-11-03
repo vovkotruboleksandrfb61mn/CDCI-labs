@@ -322,3 +322,9 @@ TLS усі три атаки провалилися: підміна виявля
 # Додаток В. Відтворення сценаріїв (`run.sh`) {-}
 
 \lstinputlisting[language=bash]{Labs/05-modbus-tls/run.sh}
+
+\newpage
+
+# Додаток Г. Генерування сертифікатів (`gen-certs.sh`) {-}
+
+\lstinputlisting[language=bash]{Labs/05-modbus-tls/gen-certs.sh}
