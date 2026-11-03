@@ -16,6 +16,13 @@
 | 04 | Моделювання атак на ОКІ у Cooja | DIS-атака на RPL, порівняння енергоспоживання до та після, сценарій без duty cycling |
 | 05 | Вдосконалення недоліків протоколів IoT | захист Modbus TCP через TLS 1.3 (OpenSSL), активні атаки на канал, сніфер |
 
+Готові звіти (PDF) зібрано в [`reports/`](reports/):
+[ЛР1](reports/LR1_RiskDynamics_Vovkotrub_FB-61mn.pdf) ·
+[ЛР2](reports/LR2_CVSS_Vovkotrub_FB-61mn.pdf) ·
+[ЛР3](reports/LR3_Cooja_Vovkotrub_FB-61mn.pdf) ·
+[ЛР4](reports/LR4_CoojaAttack_Vovkotrub_FB-61mn.pdf) ·
+[ЛР5](reports/LR5_ModbusTLS_Vovkotrub_FB-61mn.pdf).
+
 ## Структура
 
 ```
