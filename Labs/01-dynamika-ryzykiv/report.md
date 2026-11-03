@@ -369,3 +369,9 @@ IEC 62443), рівень виконання чеклістів, кількіст
    Butterworths, 1982. 144 p.
 6. Montgomery D. C., Peck E. A., Vining G. G. Introduction to Linear
    Regression Analysis. 6th ed. Hoboken : Wiley, 2021. 704 p.
+
+\newpage
+
+# Додаток А. Розрахунки (`solution.py`) {-}
+
+\lstinputlisting[language=Python]{Labs/01-dynamika-ryzykiv/solution.py}

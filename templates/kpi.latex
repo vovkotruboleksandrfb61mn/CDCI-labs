@@ -43,6 +43,26 @@
 \makeatother
 \usepackage{xcolor}
 \usepackage{fancyvrb}
+%% Лістинги коду в додатках: перенос довгих рядків, дрібний моноширинний шрифт.
+\usepackage{listings}
+\definecolor{lstcomment}{RGB}{106,115,125}
+\definecolor{lstkw}{RGB}{31,78,121}
+\definecolor{lststr}{RGB}{192,57,43}
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true,
+  tabsize=2,
+  commentstyle=\color{lstcomment},
+  keywordstyle=\color{lstkw},
+  stringstyle=\color{lststr},
+  extendedchars=true,
+  postbreak=\mbox{\textcolor{lstcomment}{$$\hookrightarrow$$}\space},
+}
 \usepackage[normalem]{ulem}
 \usepackage{amsmath,amssymb}
 \usepackage[unicode,hidelinks,breaklinks=true]{hyperref}

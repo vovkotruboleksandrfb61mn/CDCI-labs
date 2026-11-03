@@ -457,3 +457,15 @@ KEV, сегментація за IEC 62443.
 10. Стьопочкіна І. В., Ільїн К. І., Овчарук М. В. Кіберзахист об'єктів
    критичної інфраструктури. Лабораторний практикум : навч. посіб. Київ :
    КПІ ім. Ігоря Сікорського, 2023. 59 с.
+
+\newpage
+
+# Додаток А. Калькулятор CVSS 3.1 (`cvss31.py`) {-}
+
+\lstinputlisting[language=Python]{Labs/02-cvss/cvss31.py}
+
+\newpage
+
+# Додаток Б. Розрахунки та побудова (`solution.py`) {-}
+
+\lstinputlisting[language=Python]{Labs/02-cvss/solution.py}

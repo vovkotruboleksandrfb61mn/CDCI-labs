@@ -304,3 +304,21 @@ TLS усі три атаки провалилися: підміна виявля
 7. Стьопочкіна І. В., Ільїн К. І., Овчарук М. В. Кіберзахист об'єктів
    критичної інфраструктури. Лабораторний практикум : навч. посіб. Київ :
    КПІ ім. Ігоря Сікорського, 2023. 59 с.
+
+\newpage
+
+# Додаток А. Клієнт/сервер Modbus TCP з TLS (`src/modbus_tcp.c`) {-}
+
+\lstinputlisting[language=C]{Labs/05-modbus-tls/src/modbus_tcp.c}
+
+\newpage
+
+# Додаток Б. Проксі-сніфер (`src/sniffer.py`) {-}
+
+\lstinputlisting[language=Python]{Labs/05-modbus-tls/src/sniffer.py}
+
+\newpage
+
+# Додаток В. Відтворення сценаріїв (`run.sh`) {-}
+
+\lstinputlisting[language=bash]{Labs/05-modbus-tls/run.sh}

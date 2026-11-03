@@ -218,3 +218,15 @@ DODAG, кількість хопів, рівень інтерференції, �
 6. Стьопочкіна І. В., Ільїн К. І., Овчарук М. В. Кіберзахист об'єктів
    критичної інфраструктури. Лабораторний практикум : навч. посіб. Київ :
    КПІ ім. Ігоря Сікорського, 2023. 59 с.
+
+\newpage
+
+# Додаток А. Обробка журналу (`solution.py`) {-}
+
+\lstinputlisting[language=Python]{Labs/03-cooja/solution.py}
+
+\newpage
+
+# Додаток Б. Підготовка симуляції (`sim/trim_motes.py`) {-}
+
+\lstinputlisting[language=Python]{Labs/03-cooja/sim/trim_motes.py}
